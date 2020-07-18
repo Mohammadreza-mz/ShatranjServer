@@ -1,6 +1,8 @@
-package queries;
+package commons.queries;
 
-public class Logout {
+import java.io.Serializable;
+
+public class Logout implements Serializable {
     public String username;
 
     public Logout(String username) {

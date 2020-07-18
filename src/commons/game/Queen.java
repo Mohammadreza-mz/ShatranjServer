@@ -1,4 +1,4 @@
-package game;
+package commons.game;
 
 public class Queen extends Piece {
 

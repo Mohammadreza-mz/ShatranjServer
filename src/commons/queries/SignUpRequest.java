@@ -1,6 +1,6 @@
-package queries;
+package commons.queries;
 
-import dataTypes.User;
+import commons.dataTypes.User;
 
 import java.io.Serializable;
 

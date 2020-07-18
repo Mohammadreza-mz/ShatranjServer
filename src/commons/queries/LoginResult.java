@@ -1,8 +1,10 @@
-package queries;
+package commons.queries;
 
-import dataTypes.User;
+import commons.dataTypes.User;
 
-public class LoginResult {
+import java.io.Serializable;
+
+public class LoginResult implements Serializable {
     public User user;
     public String message;
     //null if user and pass doesn't match

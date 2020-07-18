@@ -1,4 +1,4 @@
-package game;
+package commons.game;
 
 
 public abstract class Piece {

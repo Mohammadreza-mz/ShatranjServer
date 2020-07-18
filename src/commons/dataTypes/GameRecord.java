@@ -1,6 +1,6 @@
-package dataTypes;
+package commons.dataTypes;
 
-import game.Player;
+import commons.game.Player;
 
 import java.io.Serializable;
 

@@ -4,7 +4,7 @@ import java.io.*;
 import java.net.Socket;
 
 import DB.UserDB;
-import queries.*;
+import commons.queries.*;
 
 public class ClientHandler implements Runnable{
     private final Socket socket;
@@ -27,6 +27,7 @@ public class ClientHandler implements Runnable{
             oos= new ObjectOutputStream(dos);
         } catch (IOException e) {
             e.printStackTrace();
+            return;
         }
 
         String username=null;
@@ -43,8 +44,8 @@ public class ClientHandler implements Runnable{
 
                 if(object instanceof SignUpRequest){
                     SignUpResult signUpResult=UserDB.signUp((SignUpRequest) object);
-                    if(signUpResult.wasSuccessful)
-                        username=((SignUpRequest) object).user.username;
+                    if(signUpResult.user != null)
+                        username= signUpResult.user.username;
                     oos.writeObject(signUpResult);
                 }
 
@@ -53,14 +54,27 @@ public class ClientHandler implements Runnable{
                     username=null;
                 }
 
+                if(object instanceof DeleteAccount){
+                    UserDB.deleteAccount((DeleteAccount) object);
+                    username=null;
+                }
+
+                if(object instanceof ChangePassword){
+                    UserDB.changePassword((ChangePassword) object);
+                }
+
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        //catch block should be updated if try block handle more type of queries
-        catch (IOException | ClassNotFoundException e){
+        //catch block should be updated if try block handle more type of commons.queries
+
+        /*catch (IOException e){
             if(username!=null)
                 UserDB.logout(new Logout(username));
-        }
+            username= null;
+        }*/
 
     }
 }

@@ -1,4 +1,4 @@
-package game;
+package commons.game;
 
 public class King extends Piece {
 
