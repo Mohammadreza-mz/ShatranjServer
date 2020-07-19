@@ -6,7 +6,7 @@ import java.util.LinkedList;
 public class User implements Serializable {
     public String username;
     private String password;
-    LinkedList<GameRecord> history= new LinkedList<>();
+    LinkedList<History> historyList= new LinkedList<>();
     LinkedList<String> blockList= new LinkedList<>();
     int win=0,lose=0;
 
@@ -30,8 +30,8 @@ public class User implements Serializable {
             blockList.remove(username);
     }
 
-    public void addToHistory(GameRecord gameRecord){
-        history.add(0, gameRecord);
+    public void addToHistory(History history){
+        historyList.add(0, history);
     }
 
     public LinkedList<SearchDetails> lastOpponent(){

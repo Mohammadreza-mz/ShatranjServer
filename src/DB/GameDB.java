@@ -14,10 +14,6 @@ public class GameDB {
 
 
 
-
-
-
-
     public static ScoreboardResult Scoreboard(ScoreboardRequest scoreboardRequest){
         LinkedList<SearchDetails> tmp=new LinkedList<>();
         for(User u:UserDB.users)

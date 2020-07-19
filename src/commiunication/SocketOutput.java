@@ -21,7 +21,7 @@ public class SocketOutput{
         }
     }
 
-    public void send(Object object){
+    public synchronized void send(Object object){
         try {
             oos.writeObject(object);
         } catch (IOException e) {

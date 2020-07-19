@@ -6,6 +6,8 @@ import java.net.SocketException;
 
 import DB.GameDB;
 import DB.UserDB;
+import commons.dataTypes.EndState;
+import commons.dataTypes.History;
 import commons.queries.*;
 
 public class ClientHandler implements Runnable{
@@ -75,12 +77,43 @@ public class ClientHandler implements Runnable{
                     socketOutput.send(GameDB.Scoreboard((ScoreboardRequest) object));
                 }
 
+                if(object instanceof GameRequest){
+                    ClientsInteractHandler.sendTo(((GameRequest) object).to, object);
+                }
+
+                if(object instanceof GameAccepted){
+                    ClientsInteractHandler.sendTo(((GameAccepted) object).to, object);
+                }
+
+                if (object instanceof GameFailed){
+                    ClientsInteractHandler.sendTo(((GameFailed) object).to,object);
+                }
+
+                if(object instanceof GameUpdate){
+                    //update viewer
+                    ClientsInteractHandler.sendTo(((GameUpdate) object).to,object);
+                }
+
+                if(object instanceof GameEnd){
+                    ClientsInteractHandler.sendTo(((GameEnd) object).to,object);
+                    GameEnd tmp= ((GameEnd) object);
+                    if(tmp.endState.equals(EndState.WON)){
+                        UserDB.updateHistory(tmp.from,new History(tmp.from, tmp.to, tmp.from,tmp.board,tmp.timeStamp,tmp.totalMoves));
+                        UserDB.updateHistory(tmp.to,new History(tmp.to, tmp.from, tmp.from,tmp.board,tmp.timeStamp,tmp.totalMoves));
+                    }
+                    else{
+                        UserDB.updateHistory(tmp.from,new History(tmp.from, tmp.to, tmp.to,tmp.board,tmp.timeStamp,tmp.totalMoves));
+                        UserDB.updateHistory(tmp.to,new History(tmp.to, tmp.from, tmp.to,tmp.board,tmp.timeStamp,tmp.totalMoves));
+                    }
+                }
+
+                if(object instanceof GameMessages){
+                    ClientsInteractHandler.sendTo(((GameMessages) object).username,object);
+                }
             }
         } /*catch (Exception e) {
             e.printStackTrace();
         }*/
-
-        //catch block should be updated if try block handle more type of commons.queries
 
         catch (IOException e){
             if(username!=null)

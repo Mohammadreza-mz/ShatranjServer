@@ -1,5 +1,6 @@
 package DB;
 
+import commons.dataTypes.History;
 import commons.dataTypes.SearchDetails;
 import commons.dataTypes.User;
 import commons.queries.*;
@@ -64,6 +65,10 @@ public class UserDB {
                 ret.add(u.details());
         }
         return new SearchResult(ret);
+    }
+
+    public synchronized static void updateHistory(String user, History history){
+        usernameMap.get(user).addToHistory(history);
     }
 
 }
