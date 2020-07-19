@@ -3,6 +3,7 @@ package commiunication;
 import java.io.*;
 import java.net.Socket;
 
+import DB.GameDB;
 import DB.UserDB;
 import commons.queries.*;
 
@@ -61,6 +62,14 @@ public class ClientHandler implements Runnable{
 
                 if(object instanceof ChangePassword){
                     UserDB.changePassword((ChangePassword) object);
+                }
+
+                if(object instanceof SearchRequest){
+                    oos.writeObject(UserDB.search((SearchRequest) object));
+                }
+
+                if(object instanceof ScoreboardRequest){
+                    oos.writeObject(GameDB.Scoreboard((ScoreboardRequest) object));
                 }
 
             }

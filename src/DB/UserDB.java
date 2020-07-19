@@ -1,5 +1,6 @@
 package DB;
 
+import commons.dataTypes.SearchDetails;
 import commons.dataTypes.User;
 import commons.queries.*;
 import java.util.HashMap;
@@ -54,6 +55,15 @@ public class UserDB {
 
     public synchronized static void changePassword(ChangePassword changePassword){
         usernameMap.get(changePassword.username).setPassword(changePassword.password);
+    }
+
+    public synchronized static SearchResult search(SearchRequest searchRequest){
+        LinkedList<SearchDetails> ret= usernameMap.get(searchRequest.username).lastOpponent();
+        for(User u: onlineUsers){
+            if(!ret.contains(u.details()))
+                ret.add(u.details());
+        }
+        return new SearchResult(ret);
     }
 
 }
