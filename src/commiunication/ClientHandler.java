@@ -2,6 +2,7 @@ package commiunication;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketException;
 
 import DB.GameDB;
 import DB.UserDB;
@@ -9,9 +10,11 @@ import commons.queries.*;
 
 public class ClientHandler implements Runnable{
     private final Socket socket;
+    private final SocketOutput socketOutput;
 
-    public ClientHandler(Socket socket) {
+    public ClientHandler(Socket socket, SocketOutput socketOutput) {
         this.socket = socket;
+        this.socketOutput = socketOutput;
     }
 
     @Override
@@ -19,13 +22,9 @@ public class ClientHandler implements Runnable{
 
         DataInputStream dis=null;
         ObjectInputStream ois=null;
-        DataOutputStream dos=null;
-        ObjectOutputStream oos=null;
         try {
             dis= new DataInputStream(socket.getInputStream());
             ois= new ObjectInputStream(dis);
-            dos= new DataOutputStream(socket.getOutputStream());
-            oos= new ObjectOutputStream(dos);
         } catch (IOException e) {
             e.printStackTrace();
             return;
@@ -38,25 +37,29 @@ public class ClientHandler implements Runnable{
 
                 if(object instanceof LoginRequest){
                     LoginResult loginResult=UserDB.login((LoginRequest) object);
-                    if(loginResult.user!=null)
-                        username=loginResult.user.username;
-                    oos.writeObject(loginResult);
+                    if(loginResult.user!=null) {
+                        username = loginResult.user.username;
+                        ClientsInteractHandler.setUsernameSocketOutput(username,socketOutput);
+                    }
+                    socketOutput.send(loginResult);
                 }
 
                 if(object instanceof SignUpRequest){
                     SignUpResult signUpResult=UserDB.signUp((SignUpRequest) object);
                     if(signUpResult.user != null)
                         username= signUpResult.user.username;
-                    oos.writeObject(signUpResult);
+                    socketOutput.send(signUpResult);
                 }
 
                 if(object instanceof Logout){
                     UserDB.logout((Logout) object);
+                    ClientsInteractHandler.setUsernameSocketOutput(username,null);
                     username=null;
                 }
 
                 if(object instanceof DeleteAccount){
                     UserDB.deleteAccount((DeleteAccount) object);
+                    ClientsInteractHandler.setUsernameSocketOutput(username,null);
                     username=null;
                 }
 
@@ -65,25 +68,29 @@ public class ClientHandler implements Runnable{
                 }
 
                 if(object instanceof SearchRequest){
-                    oos.writeObject(UserDB.search((SearchRequest) object));
+                    socketOutput.send(UserDB.search((SearchRequest) object));
                 }
 
                 if(object instanceof ScoreboardRequest){
-                    oos.writeObject(GameDB.Scoreboard((ScoreboardRequest) object));
+                    socketOutput.send(GameDB.Scoreboard((ScoreboardRequest) object));
                 }
 
             }
-        } catch (Exception e) {
+        } /*catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
 
         //catch block should be updated if try block handle more type of commons.queries
 
-        /*catch (IOException e){
+        catch (IOException e){
             if(username!=null)
                 UserDB.logout(new Logout(username));
             username= null;
-        }*/
+        }
+        catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
 
     }
 }

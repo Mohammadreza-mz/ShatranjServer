@@ -1,7 +1,6 @@
 package commons.dataTypes;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class User implements Serializable {

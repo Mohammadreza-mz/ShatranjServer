@@ -12,7 +12,7 @@ public class Server {
         serverSocket= new ServerSocket(port);
         while (true){
             Socket socket= serverSocket.accept();
-            new Thread(new ClientHandler(socket)).start();
+            new Thread(new ClientHandler(socket,new SocketOutput(socket))).start();
         }
     }
 
